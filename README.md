@@ -1,4 +1,9 @@
+![Terraform](https://img.shields.io/badge/IaC-Terraform-blue)
+![AWS](https://img.shields.io/badge/Cloud-AWS-orange)
+
 # 🚀 Terraform AWS Web App Infrastructure
+
+Built a scalable, load-balanced AWS infrastructure using Terraform with Auto Scaling and Application Load Balancer.
 
 This project provisions a production-style AWS 2-tier architecture using Terraform, including networking, compute, load balancing, and database layers.
 
@@ -10,33 +15,47 @@ It demonstrates Infrastructure as Code (IaC) best practices such as modular desi
 
 This project deploys:
 
-- VPC with public and private subnets across two Availability Zones
-- Internet Gateway for public access
-- NAT Gateway for outbound access from private subnets
-- Application Load Balancer (ALB) for traffic distribution
-- EC2 instance(s) hosting a web application
-- RDS (MySQL) database in private subnets
-- Security Groups enforcing least-privilege access
-- Terraform remote state (S3 backend)
+- VPC with public and private subnets across multiple Availability Zones  
+- Internet Gateway for public access  
+- NAT Gateway for outbound internet access from private subnets  
+- Application Load Balancer (ALB) for distributing incoming traffic  
+- Auto Scaling Group (ASG) for scalable and self-healing compute  
+- EC2 instances launched via Launch Template  
+- RDS (MySQL/PostgreSQL) database in private subnets  
+- Security Groups enforcing least-privilege access  
+- Terraform remote state stored in S3
 
 ### Traffic Flow
 
 ```text
-
 Internet
-
-  ↓
-   
+↓
 [Application Load Balancer]
-
-  ↓
-   
-[EC2 Instances - Public Subnet]
-
-  ↓
-   
-[RDS Database - Private Subnet]
+↓
+[Target Group]
+↓
+[Auto Scaling Group]
+↓
+[EC2 Instances - Private Subnets]
+↓
+[RDS Database - Private Subnets]
 ```
+
+---
+
+## 🚀 Architecture Evolution
+
+### Initial Version
+- Single EC2 instance
+- Basic VPC networking
+- Direct access to application
+
+### Enhanced Version
+- Introduced Application Load Balancer
+- Implemented Launch Template and Auto Scaling Group
+- Enabled horizontal scaling and self-healing infrastructure
+- Moved compute layer to private subnets behind ALB
+
 
 ## 📁 Project Structure
 
@@ -121,22 +140,27 @@ After deployment, Terraform will output:
 - ALB DNS Name → Access your web application
 - VPC ID
 - Subnet IDs
-- EC2 Instance ID
-- RDS Endpoint (sensitive)
+- Auto Scaling Group Name
+- Launch Template ID
+
+Use the ALB DNS Name in your browser to access the deployed web application.
 
 ## 🔐 Security Design
-- RDS is deployed in private subnets (no public access)
-- EC2 only accepts traffic from the ALB security group
-- SSH access restricted to trusted IP only
-- Security groups enforce least-privilege access
+- ALB is publicly accessible and handles all inbound traffic  
+- EC2 instances are deployed in private subnets (no direct internet access)  
+- RDS database is isolated in private subnets  
+- Security groups restrict traffic between tiers (ALB → EC2 → RDS)  
+- SSH access is limited to trusted IP addresses only  
 
 ## 🧠 Key Concepts Demonstrated
-- Terraform module design and composition
-- AWS networking (VPC, subnets, routing)
-- Load balancing with ALB
-- Infrastructure separation (public vs private tiers)
-- Remote state management
-- Reusable and parameterized infrastructure
+- Terraform module design and reusable infrastructure  
+- AWS networking (VPC, subnets, routing, NAT Gateway)  
+- Load balancing with Application Load Balancer  
+- Auto Scaling Groups for high availability and scalability  
+- Infrastructure separation (public vs private tiers)  
+- Launch Templates for standardized EC2 provisioning  
+- Remote state management using S3
+- Secure architecture using least-privilege principles 
 
 ## 📸 Screenshots
 
@@ -148,14 +172,14 @@ After deployment, Terraform will output:
 ![ALB Screenshot](images/alb_target_group_dashboard.jpg)
 
 ### Browser hitting ALB DNS
-![Brower to ALB DNS](images/browser_to_dns.jpg)
+![Browser to ALB DNS](images/browser_to_dns.jpg)
 
 ### Terraform apply output
 ![Outputs in CMD](images/outputs.jpg)
 
 ---
 
-## 💼 Completed Summary
+## 💼 Project Summary
 
 Built a modular Terraform project to provision a production-style AWS infrastructure including VPC, subnets, security groups, EC2, Application Load Balancer, and RDS. Implemented environment-based configuration, secure network segmentation, and reusable infrastructure components.
 

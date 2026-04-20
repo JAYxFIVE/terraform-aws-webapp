@@ -1,3 +1,18 @@
+data "aws_ami" "amazon_linux_2023" {
+  most_recent = true
+  owners      = ["amazon"]
+
+  filter {
+    name   = "name"
+    values = ["al2023-ami-2023.*-x86_64"]
+  }
+
+  filter {
+    name   = "architecture"
+    values = ["x86_64"]
+  }
+}
+
 module "vpc" {
   source = "./modules/vpc"
 
@@ -24,22 +39,23 @@ module "security_groups" {
 module "ec2" {
   source = "./modules/ec2"
 
-  project_name      = var.project_name
-  environment       = var.environment
-  instance_type     = var.instance_type
-  subnet_id         = module.vpc.private_subnet_ids[0]
-  security_group_id = module.security_groups.ec2_sg_id
+  project_name       = var.project_name
+  environment        = var.environment
+  ami_id             = data.aws_ami.amazon_linux_2023.id
+  instance_type      = var.instance_type
+  ec2_sg_id          = module.security_groups.ec2_sg_id
+  private_subnet_ids = module.vpc.private_subnet_ids
+  target_group_arn   = module.alb.alb_target_group_arn
 }
 
 module "alb" {
   source = "./modules/alb"
 
-  project_name       = var.project_name
-  environment        = var.environment
-  vpc_id             = module.vpc.vpc_id
-  public_subnet_ids  = module.vpc.public_subnet_ids
-  alb_sg_id          = module.security_groups.alb_sg_id
-  target_instance_id = module.ec2.web_instance_id
+  project_name      = var.project_name
+  environment       = var.environment
+  vpc_id            = module.vpc.vpc_id
+  public_subnet_ids = module.vpc.public_subnet_ids
+  alb_sg_id         = module.security_groups.alb_sg_id
 }
 
 module "rds" {

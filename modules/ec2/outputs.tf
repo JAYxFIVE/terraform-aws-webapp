@@ -1,11 +1,7 @@
-output "web_instance_id" {
-  value = aws_instance.web.id
+output "launch_template_id" {
+  value = aws_launch_template.web.id
 }
 
-output "private_ip" {
-  value = aws_instance.web.private_ip
-}
-
-output "public_ip" {
-  value = aws_instance.web.public_ip
+output "asg_name" {
+  value = aws_autoscaling_group.web.name
 }

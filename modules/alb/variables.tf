@@ -8,16 +8,12 @@ variable "environment" {
   type        = string
 
   validation {
-    condition     = contains(["dev","prod"], var.environment)
+    condition     = contains(["dev", "prod"], var.environment)
     error_message = "Environment must be either 'dev' or 'prod'"
   }
 }
 
 variable "vpc_id" {
-  type = string
-}
-
-variable "target_instance_id" {
   type = string
 }
 

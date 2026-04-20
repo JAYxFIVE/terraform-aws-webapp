@@ -6,7 +6,7 @@ output "rds_endpoint" {
   value = module.rds.rds_endpoint
 }
 
-output "web_instance_id" {
-  value = module.ec2.web_instance_id
+output "launch_template_id" {
+  value = module.ec2.launch_template_id
 }
 
